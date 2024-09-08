@@ -163,7 +163,7 @@ function App$Lattice(props) {
                       viewBox: "0 0 " + viewBoxSize + " " + viewBoxSize,
                       xmlns: "http://www.w3.org/2000/svg"
                     }),
-                className: "w-40 m-6"
+                className: "w-80 sm:w-40 m-6"
               });
   }
 }
@@ -195,7 +195,7 @@ function App(props) {
                       className: "flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 py-8 "
                     }),
                 JsxRuntime.jsx("div", {
-                      children: Core__Array.make(1000, false).map(function (param) {
+                      children: Core__Array.make(100, false).map(function (param) {
                             return JsxRuntime.jsx(App$Lattice, {});
                           }),
                       className: "p-6 flex flex-row flex-wrap bg-gray-100 justify-center"

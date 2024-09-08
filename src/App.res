@@ -178,7 +178,7 @@ module Lattice = {
 
     paths == ""
       ? React.null
-      : <div className="w-40 m-6">
+      : <div className="w-80 sm:w-40 m-6">
           // <svg viewBox={`0 0 1040 1040`} xmlns="http://www.w3.org/2000/svg">
           //   <g transform={`translate(20, 20)`}>
 
@@ -223,7 +223,7 @@ let make = () => {
       </div>
     </div>
     <div className="p-6 flex flex-row flex-wrap bg-gray-100 justify-center">
-      {Array.make(~length=1000, false)
+      {Array.make(~length=100, false)
       ->Array.map(_ => {
         <Lattice />
       })
