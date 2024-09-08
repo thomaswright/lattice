@@ -13,10 +13,43 @@ function randomInt(a, b) {
   return Math.random() * (b - a) + a | 0;
 }
 
+function intAbs(a, b) {
+  if (a > b) {
+    return a - b | 0;
+  } else {
+    return b - a | 0;
+  }
+}
+
+function dist(param, param$1) {
+  var dx = param$1[0] - param[0] | 0;
+  var dy = param$1[1] - param[1] | 0;
+  return Math.sqrt(dx * dx + dy * dy) | 0;
+}
+
+function getShapeFilter(gridNum) {
+  var cutoff = Math.random();
+  return function (i, j) {
+    if (cutoff < 0.3) {
+      return dist([
+                  gridNum / 2 | 0,
+                  gridNum / 2 | 0
+                ], [
+                  i,
+                  j
+                ]) > (gridNum / 2 | 0);
+    } else if (cutoff < 0.6) {
+      return (intAbs(gridNum / 2 | 0, i) + intAbs(gridNum / 2 | 0, j) | 0) > (gridNum / 2 | 0);
+    } else {
+      return false;
+    }
+  };
+}
+
 function App$Lattice(props) {
-  var gridNum = randomInt(16, 80);
+  var gridNum = randomInt(12, 12);
   var cutoff = random(0.1, 0.5);
-  var strokeWidth = 1.3 * (1000 / gridNum) | 0;
+  var strokeWidth = random(0.4, 1.8) * (1000 / gridNum) | 0;
   var length = Caml_int32.div(2000, gridNum);
   var empty = Core__Array.make(gridNum, false).map(function (param) {
         return Core__Array.make(gridNum, false);
@@ -26,9 +59,10 @@ function App$Lattice(props) {
                     return Math.random();
                   });
       });
+  var shapeFilter = getShapeFilter(gridNum);
   var paths = Belt_Array.keepMap(Belt_Array.concatMany(withVals.map(function (a, i) {
                   return a.map(function (v, j) {
-                              if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j) {
+                              if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j || shapeFilter(i, j)) {
                                 return ;
                               }
                               var direction = j % 2 === 0 ? "h" : "v";
@@ -43,31 +77,50 @@ function App$Lattice(props) {
                 })), (function (x) {
             return x;
           })).join(" ");
-  var color = "oklch( " + randomInt(30, 90).toString() + "%  " + randomInt(50, 100).toString() + "% " + randomInt(0, 360).toString() + ")";
+  var l = randomInt(30, 90);
+  var c = randomInt(50, 100).toString();
+  var h = randomInt(0, 360).toString();
+  var bg_c = randomInt(50, 100).toString();
+  var bg_l = l < 50 ? randomInt(70, 95) : randomInt(10, 30);
+  var bg_h = randomInt(0, 360).toString();
+  var color = "oklch(" + l.toString() + "% " + c + "% " + h + ")";
+  var bgColor = "oklch(" + bg_l.toString() + "% " + bg_c + "% " + bg_h + ")";
+  var padding = 0.4 * 1000 | 0;
+  var viewBoxSize = ((1000 + strokeWidth | 0) + padding | 0).toString();
+  var viewBoxAdjustment = ((strokeWidth + padding | 0) / 2 | 0).toString();
   return JsxRuntime.jsx("div", {
-              children: JsxRuntime.jsx("svg", {
-                    children: JsxRuntime.jsx("g", {
-                          children: [
-                              "",
-                              "rotate(90, 500, 500)",
-                              "rotate(180, 500, 500)",
-                              "rotate(270, 500, 500)",
-                              "rotate(90, 0, 0) scale(1,-1)",
-                              "rotate(90, 0, 0) scale(1,-1) rotate(90, 500, 500)",
-                              "rotate(90, 0, 0) scale(1,-1) rotate(180, 500, 500)",
-                              "rotate(90, 0, 0) scale(1,-1) rotate(270, 500, 500)"
-                            ].map(function (transform) {
-                                return JsxRuntime.jsx("path", {
-                                            d: paths,
-                                            fill: "none",
-                                            stroke: color,
-                                            strokeWidth: strokeWidth.toString(),
-                                            transform: transform
-                                          });
-                              }),
-                          transform: "translate(" + (strokeWidth / 2 | 0).toString() + ", " + (strokeWidth / 2 | 0).toString() + ")"
-                        }),
-                    viewBox: "0 0 " + (1000 + strokeWidth | 0).toString() + " " + (1000 + strokeWidth | 0).toString(),
+              children: JsxRuntime.jsxs("svg", {
+                    children: [
+                      JsxRuntime.jsx("rect", {
+                            height: viewBoxSize,
+                            width: viewBoxSize,
+                            fill: bgColor,
+                            x: "0",
+                            y: "0"
+                          }),
+                      JsxRuntime.jsx("g", {
+                            children: [
+                                "",
+                                "rotate(90, 500, 500)",
+                                "rotate(180, 500, 500)",
+                                "rotate(270, 500, 500)",
+                                "rotate(90, 0, 0) scale(1,-1)",
+                                "rotate(90, 0, 0) scale(1,-1) rotate(90, 500, 500)",
+                                "rotate(90, 0, 0) scale(1,-1) rotate(180, 500, 500)",
+                                "rotate(90, 0, 0) scale(1,-1) rotate(270, 500, 500)"
+                              ].map(function (transform) {
+                                  return JsxRuntime.jsx("path", {
+                                              d: paths,
+                                              fill: "none",
+                                              stroke: color,
+                                              strokeWidth: strokeWidth.toString(),
+                                              transform: transform
+                                            });
+                                }),
+                            transform: "translate(" + viewBoxAdjustment + ", " + viewBoxAdjustment + ")"
+                          })
+                    ],
+                    viewBox: "0 0 " + viewBoxSize + " " + viewBoxSize,
                     xmlns: "http://www.w3.org/2000/svg"
                   }),
               className: "w-40 p-4"
@@ -76,10 +129,10 @@ function App$Lattice(props) {
 
 function App(props) {
   return JsxRuntime.jsx("div", {
-              children: Core__Array.make(100, false).map(function (param) {
+              children: Core__Array.make(1000, false).map(function (param) {
                     return JsxRuntime.jsx(App$Lattice, {});
                   }),
-              className: "p-6 flex flex-row flex-wrap"
+              className: "p-6 flex flex-row flex-wrap bg-black"
             });
 }
 
