@@ -94,6 +94,18 @@ function App$Lattice(props) {
                   });
       });
   var shapeFilter = getShapeFilter(gridNum);
+  Belt_Array.concatMany(withVals.map(function (a, i) {
+            return a.map(function (v, j) {
+                        if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j || shapeFilter(i, j)) {
+                          return ;
+                        } else {
+                          return [
+                                  i,
+                                  j
+                                ];
+                        }
+                      });
+          }));
   var paths = Belt_Array.keepMap(Belt_Array.concatMany(withVals.map(function (a, i) {
                   return a.map(function (v, j) {
                               if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j || shapeFilter(i, j)) {
@@ -160,11 +172,38 @@ function App$Lattice(props) {
 }
 
 function App(props) {
-  return JsxRuntime.jsx("div", {
-              children: Core__Array.make(1000, false).map(function (param) {
-                    return JsxRuntime.jsx(App$Lattice, {});
-                  }),
-              className: "p-6 flex flex-row flex-wrap bg-white"
+  return JsxRuntime.jsxs("div", {
+              children: [
+                JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsx("div", {
+                              children: "Lattice",
+                              className: "font-thin font-serif uppercase text-5xl mb-4 border-4 border-gray-900 w-fit px-8 py-4",
+                              style: {
+                                letterSpacing: "0.2em"
+                              }
+                            }),
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                "A generative art project by ",
+                                JsxRuntime.jsx("a", {
+                                      children: "Thomas Wright",
+                                      className: " font-black text-gray-900",
+                                      href: "https://github.com/thomaswright/lattice"
+                                    })
+                              ],
+                              className: "uppercase text-sm text-gray-900"
+                            })
+                      ],
+                      className: "flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 py-8 "
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: Core__Array.make(1000, false).map(function (param) {
+                            return JsxRuntime.jsx(App$Lattice, {});
+                          }),
+                      className: "p-6 flex flex-row flex-wrap bg-gray-100 justify-center"
+                    })
+              ]
             });
 }
 

@@ -143,6 +143,20 @@ module Lattice = {
 
     let withVals = empty->Array.map(a => a->Array.map(_ => Math.random()))
     let shapeFilter = getShapeFilter(gridNum)
+    let id =
+      withVals
+      ->Array.mapWithIndex((a, i) =>
+        a->Array.mapWithIndex((v, j) => {
+          mod(i + j, 2) == 0 ||
+          v > cutoff ||
+          (i > gridNum / 2 || j > gridNum / 2 || i > j) ||
+          shapeFilter(i, j)
+            ? None
+            : Some((i, j))
+        })
+      )
+      ->Belt.Array.concatMany
+
     let paths =
       withVals
       ->Array.mapWithIndex((a, i) =>
@@ -203,11 +217,27 @@ module Lattice = {
 
 @react.component
 let make = () => {
-  <div className="p-6 flex flex-row flex-wrap bg-white">
-    {Array.make(~length=1000, false)
-    ->Array.map(_ => {
-      <Lattice />
-    })
-    ->React.array}
+  <div>
+    <div
+      className="flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 py-8 ">
+      <div
+        className="font-thin font-serif uppercase text-5xl mb-4 border-4 border-gray-900 w-fit px-8 py-4"
+        style={{letterSpacing: "0.2em"}}>
+        {"Lattice"->React.string}
+      </div>
+      <div className="uppercase text-sm text-gray-900">
+        {"A generative art project by "->React.string}
+        <a className={" font-black text-gray-900"} href={"https://github.com/thomaswright/lattice"}>
+          {"Thomas Wright"->React.string}
+        </a>
+      </div>
+    </div>
+    <div className="p-6 flex flex-row flex-wrap bg-gray-100 justify-center">
+      {Array.make(~length=1000, false)
+      ->Array.map(_ => {
+        <Lattice />
+      })
+      ->React.array}
+    </div>
   </div>
 }
