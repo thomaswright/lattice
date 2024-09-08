@@ -156,28 +156,18 @@ module Lattice = {
         })
       )
       ->Belt.Array.concatMany
+      ->Belt.Array.keepMap(x => x)
 
     let paths =
-      withVals
-      ->Array.mapWithIndex((a, i) =>
-        a->Array.mapWithIndex((v, j) => {
-          mod(i + j, 2) == 0 ||
-          v > cutoff ||
-          (i > gridNum / 2 || j > gridNum / 2 || i > j) ||
-          shapeFilter(i, j)
-            ? None
-            : Some({
-                let direction = mod(j, 2) == 0 ? "h" : "v"
-                let x = mod(j, 2) == 0 ? (i - 1) / 2 : i / 2
-                let y = mod(i, 2) == 0 ? (j - 1) / 2 : j / 2
-                `M ${(x * length - (mod(j, 2) == 0 ? strokeWidth / 2 : 0))->its},${(y * length - (
-                      mod(j, 2) == 1 ? strokeWidth / 2 : 0
-                    ))->its} ${direction} ${(length + strokeWidth)->its}`
-              })
-        })
-      )
-      ->Belt.Array.concatMany
-      ->Belt.Array.keepMap(x => x)
+      id
+      ->Array.map(((i, j)) => {
+        let direction = mod(j, 2) == 0 ? "h" : "v"
+        let x = mod(j, 2) == 0 ? (i - 1) / 2 : i / 2
+        let y = mod(i, 2) == 0 ? (j - 1) / 2 : j / 2
+        `M ${(x * length - (mod(j, 2) == 0 ? strokeWidth / 2 : 0))->its},${(y * length - (
+              mod(j, 2) == 1 ? strokeWidth / 2 : 0
+            ))->its} ${direction} ${(length + strokeWidth)->its}`
+      })
       ->Array.join(" ")
 
     let (color, bgColor, _isDark) = getColorPair()

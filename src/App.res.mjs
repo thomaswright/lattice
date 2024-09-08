@@ -94,35 +94,32 @@ function App$Lattice(props) {
                   });
       });
   var shapeFilter = getShapeFilter(gridNum);
-  Belt_Array.concatMany(withVals.map(function (a, i) {
-            return a.map(function (v, j) {
-                        if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j || shapeFilter(i, j)) {
-                          return ;
-                        } else {
-                          return [
-                                  i,
-                                  j
-                                ];
-                        }
-                      });
-          }));
-  var paths = Belt_Array.keepMap(Belt_Array.concatMany(withVals.map(function (a, i) {
-                  return a.map(function (v, j) {
-                              if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j || shapeFilter(i, j)) {
-                                return ;
-                              }
-                              var direction = j % 2 === 0 ? "h" : "v";
-                              var x = j % 2 === 0 ? (i - 1 | 0) / 2 | 0 : i / 2 | 0;
-                              var y = i % 2 === 0 ? (j - 1 | 0) / 2 | 0 : j / 2 | 0;
-                              return "M " + (Math.imul(x, length) - (
-                                          j % 2 === 0 ? strokeWidth / 2 | 0 : 0
-                                        ) | 0).toString() + "," + (Math.imul(y, length) - (
-                                          j % 2 === 1 ? strokeWidth / 2 | 0 : 0
-                                        ) | 0).toString() + " " + direction + " " + (length + strokeWidth | 0).toString();
-                            });
-                })), (function (x) {
-            return x;
-          })).join(" ");
+  var id = Belt_Array.keepMap(Belt_Array.concatMany(withVals.map(function (a, i) {
+                return a.map(function (v, j) {
+                            if ((i + j | 0) % 2 === 0 || v > cutoff || i > (gridNum / 2 | 0) || j > (gridNum / 2 | 0) || i > j || shapeFilter(i, j)) {
+                              return ;
+                            } else {
+                              return [
+                                      i,
+                                      j
+                                    ];
+                            }
+                          });
+              })), (function (x) {
+          return x;
+        }));
+  var paths = id.map(function (param) {
+          var j = param[1];
+          var i = param[0];
+          var direction = j % 2 === 0 ? "h" : "v";
+          var x = j % 2 === 0 ? (i - 1 | 0) / 2 | 0 : i / 2 | 0;
+          var y = i % 2 === 0 ? (j - 1 | 0) / 2 | 0 : j / 2 | 0;
+          return "M " + (Math.imul(x, length) - (
+                      j % 2 === 0 ? strokeWidth / 2 | 0 : 0
+                    ) | 0).toString() + "," + (Math.imul(y, length) - (
+                      j % 2 === 1 ? strokeWidth / 2 | 0 : 0
+                    ) | 0).toString() + " " + direction + " " + (length + strokeWidth | 0).toString();
+        }).join(" ");
   var match = getColorPair();
   var color = match[0];
   var padding = random(0.2, 0.5) * 1000 | 0;
