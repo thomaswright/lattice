@@ -3,6 +3,7 @@
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_int32 from "rescript/lib/es6/caml_int32.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
+import * as Color from "@texel/color";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function random(a, b) {
@@ -30,24 +31,57 @@ function dist(param, param$1) {
 function getShapeFilter(gridNum) {
   var cutoff = Math.random();
   return function (i, j) {
-    if (cutoff < 0.3) {
-      return dist([
-                  gridNum / 2 | 0,
-                  gridNum / 2 | 0
-                ], [
-                  i,
-                  j
-                ]) > (gridNum / 2 | 0);
+    var inCircle = dist([
+          gridNum / 2 | 0,
+          gridNum / 2 | 0
+        ], [
+          i,
+          j
+        ]) > (gridNum / 2 | 0);
+    var inDiamond = (intAbs(gridNum / 2 | 0, i) + intAbs(gridNum / 2 | 0, j) | 0) > (gridNum / 2 | 0);
+    if (cutoff < 0.1) {
+      return !inCircle;
+    } else if (cutoff < 0.2) {
+      return !inDiamond;
+    } else if (cutoff < 0.4) {
+      return inCircle;
     } else if (cutoff < 0.6) {
-      return (intAbs(gridNum / 2 | 0, i) + intAbs(gridNum / 2 | 0, j) | 0) > (gridNum / 2 | 0);
+      return inDiamond;
     } else {
       return false;
     }
   };
 }
 
+function getColorPair() {
+  var h1 = random(0, 360);
+  var h2 = random(0, 360);
+  var flipD = Math.random() > 0.5;
+  var v1 = random(flipD ? 0.6 : 0.8, 1.0);
+  var v2 = random(0.0, flipD ? 0.2 : 0.4);
+  var c1 = random(0.8, 1.0);
+  var c2 = random(0.8, 1.0);
+  var flipV = Math.random() > 0.5;
+  var flipSpace = Math.random() > 0.5;
+  var color1 = Color.RGBToHex(Color.convert([
+            h1,
+            c1,
+            flipV ? v1 : v2
+          ], flipSpace ? Color.OKHSL : Color.OKHSV, Color.sRGB));
+  var color2 = Color.RGBToHex(Color.convert([
+            h2,
+            c2,
+            flipV ? v2 : v1
+          ], flipSpace ? Color.OKHSL : Color.OKHSV, Color.sRGB));
+  return [
+          color1,
+          color2,
+          flipV
+        ];
+}
+
 function App$Lattice(props) {
-  var gridNum = randomInt(12, 12);
+  var gridNum = randomInt(8, 80);
   var cutoff = random(0.1, 0.5);
   var strokeWidth = random(0.4, 1.8) * (1000 / gridNum) | 0;
   var length = Caml_int32.div(2000, gridNum);
@@ -77,54 +111,52 @@ function App$Lattice(props) {
                 })), (function (x) {
             return x;
           })).join(" ");
-  var l = randomInt(30, 90);
-  var c = randomInt(50, 100).toString();
-  var h = randomInt(0, 360).toString();
-  var bg_c = randomInt(50, 100).toString();
-  var bg_l = l < 50 ? randomInt(70, 95) : randomInt(10, 30);
-  var bg_h = randomInt(0, 360).toString();
-  var color = "oklch(" + l.toString() + "% " + c + "% " + h + ")";
-  var bgColor = "oklch(" + bg_l.toString() + "% " + bg_c + "% " + bg_h + ")";
-  var padding = 0.4 * 1000 | 0;
+  var match = getColorPair();
+  var color = match[0];
+  var padding = random(0.2, 0.5) * 1000 | 0;
   var viewBoxSize = ((1000 + strokeWidth | 0) + padding | 0).toString();
   var viewBoxAdjustment = ((strokeWidth + padding | 0) / 2 | 0).toString();
-  return JsxRuntime.jsx("div", {
-              children: JsxRuntime.jsxs("svg", {
-                    children: [
-                      JsxRuntime.jsx("rect", {
-                            height: viewBoxSize,
-                            width: viewBoxSize,
-                            fill: bgColor,
-                            x: "0",
-                            y: "0"
-                          }),
-                      JsxRuntime.jsx("g", {
-                            children: [
-                                "",
-                                "rotate(90, 500, 500)",
-                                "rotate(180, 500, 500)",
-                                "rotate(270, 500, 500)",
-                                "rotate(90, 0, 0) scale(1,-1)",
-                                "rotate(90, 0, 0) scale(1,-1) rotate(90, 500, 500)",
-                                "rotate(90, 0, 0) scale(1,-1) rotate(180, 500, 500)",
-                                "rotate(90, 0, 0) scale(1,-1) rotate(270, 500, 500)"
-                              ].map(function (transform) {
-                                  return JsxRuntime.jsx("path", {
-                                              d: paths,
-                                              fill: "none",
-                                              stroke: color,
-                                              strokeWidth: strokeWidth.toString(),
-                                              transform: transform
-                                            });
-                                }),
-                            transform: "translate(" + viewBoxAdjustment + ", " + viewBoxAdjustment + ")"
-                          })
-                    ],
-                    viewBox: "0 0 " + viewBoxSize + " " + viewBoxSize,
-                    xmlns: "http://www.w3.org/2000/svg"
-                  }),
-              className: "w-40 p-4"
-            });
+  if (paths === "") {
+    return null;
+  } else {
+    return JsxRuntime.jsx("div", {
+                children: JsxRuntime.jsxs("svg", {
+                      children: [
+                        JsxRuntime.jsx("rect", {
+                              height: viewBoxSize,
+                              width: viewBoxSize,
+                              fill: match[1],
+                              x: "0",
+                              y: "0"
+                            }),
+                        JsxRuntime.jsx("g", {
+                              children: [
+                                  "",
+                                  "rotate(90, 500, 500)",
+                                  "rotate(180, 500, 500)",
+                                  "rotate(270, 500, 500)",
+                                  "rotate(90, 0, 0) scale(1,-1)",
+                                  "rotate(90, 0, 0) scale(1,-1) rotate(90, 500, 500)",
+                                  "rotate(90, 0, 0) scale(1,-1) rotate(180, 500, 500)",
+                                  "rotate(90, 0, 0) scale(1,-1) rotate(270, 500, 500)"
+                                ].map(function (transform) {
+                                    return JsxRuntime.jsx("path", {
+                                                d: paths,
+                                                fill: "none",
+                                                stroke: color,
+                                                strokeWidth: strokeWidth.toString(),
+                                                transform: transform
+                                              });
+                                  }),
+                              transform: "translate(" + viewBoxAdjustment + ", " + viewBoxAdjustment + ")"
+                            })
+                      ],
+                      viewBox: "0 0 " + viewBoxSize + " " + viewBoxSize,
+                      xmlns: "http://www.w3.org/2000/svg"
+                    }),
+                className: "w-40 m-6"
+              });
+  }
 }
 
 function App(props) {
@@ -132,7 +164,7 @@ function App(props) {
               children: Core__Array.make(1000, false).map(function (param) {
                     return JsxRuntime.jsx(App$Lattice, {});
                   }),
-              className: "p-6 flex flex-row flex-wrap bg-black"
+              className: "p-6 flex flex-row flex-wrap bg-white"
             });
 }
 
@@ -141,4 +173,4 @@ var make = App;
 export {
   make ,
 }
-/* react/jsx-runtime Not a pure module */
+/* @texel/color Not a pure module */
