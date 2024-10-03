@@ -131,9 +131,13 @@ let getColorPair = () => {
   (color1, color2, flipV)
 }
 
+@module("./downloadSvgAsPng.js") external downloadSvgAsPng: Dom.element => unit = "default"
+
 module Lattice = {
   @react.component
   let make = () => {
+    let svgRef = React.useRef(Nullable.null)
+
     let gridNum = randomInt(8, 80)
     let cutoff = random(0.1, 0.5)
     let strokeWidth = (random(0.4, 1.8) *. (1000. /. gridNum->Int.toFloat))->Float.toInt
@@ -178,11 +182,15 @@ module Lattice = {
 
     paths == ""
       ? React.null
-      : <div className="w-80 sm:w-40 m-6">
+      : <div
+          className="w-80 sm:w-40 m-6" onClick={_ => downloadSvgAsPng(svgRef.current->Obj.magic)}>
           // <svg viewBox={`0 0 1040 1040`} xmlns="http://www.w3.org/2000/svg">
           //   <g transform={`translate(20, 20)`}>
 
-          <svg viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`} xmlns="http://www.w3.org/2000/svg">
+          <svg
+            ref={ReactDOM.Ref.domRef(svgRef)}
+            viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+            xmlns="http://www.w3.org/2000/svg">
             <rect x="0" y="0" width={viewBoxSize} height={viewBoxSize} fill=bgColor />
             <g transform={`translate(${viewBoxAdjustment}, ${viewBoxAdjustment})`}>
               {[
