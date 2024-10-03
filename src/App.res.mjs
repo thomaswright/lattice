@@ -6,8 +6,8 @@ import * as Caml_int32 from "rescript/lib/es6/caml_int32.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Color from "@texel/color";
+import DownloadSvgJs from "./downloadSvg.js";
 import * as JsxRuntime from "react/jsx-runtime";
-import DownloadSvgAsPngJs from "./downloadSvgAsPng.js";
 
 function random(a, b) {
   return Math.random() * (b - a) + a;
@@ -170,7 +170,7 @@ function App$Lattice(props) {
                     }),
                 className: "w-80 sm:w-40 m-6",
                 onClick: (function (param) {
-                    DownloadSvgAsPngJs(svgRef.current);
+                    DownloadSvgJs(svgRef.current);
                   })
               });
   }

@@ -131,7 +131,7 @@ let getColorPair = () => {
   (color1, color2, flipV)
 }
 
-@module("./downloadSvgAsPng.js") external downloadSvgAsPng: Dom.element => unit = "default"
+@module("./downloadSvg.js") external downloadSvg: Dom.element => unit = "default"
 
 module Lattice = {
   @react.component
@@ -182,8 +182,7 @@ module Lattice = {
 
     paths == ""
       ? React.null
-      : <div
-          className="w-80 sm:w-40 m-6" onClick={_ => downloadSvgAsPng(svgRef.current->Obj.magic)}>
+      : <div className="w-80 sm:w-40 m-6" onClick={_ => downloadSvg(svgRef.current->Obj.magic)}>
           // <svg viewBox={`0 0 1040 1040`} xmlns="http://www.w3.org/2000/svg">
           //   <g transform={`translate(20, 20)`}>
 
