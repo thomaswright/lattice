@@ -218,7 +218,7 @@ let make = () => {
     <div
       className="flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 py-8 ">
       <div
-        className="font-thin font-serif uppercase text-5xl mb-4 border-4 border-gray-900 w-fit px-8 py-4"
+        className="font-black uppercase text-5xl mb-4 border-gray-900 w-fit px-8 py-4"
         style={{letterSpacing: "0.2em"}}>
         {"Lattice"->React.string}
       </div>

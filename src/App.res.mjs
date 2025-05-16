@@ -183,7 +183,7 @@ function App(props) {
                       children: [
                         JsxRuntime.jsx("div", {
                               children: "Lattice",
-                              className: "font-thin font-serif uppercase text-5xl mb-4 border-4 border-gray-900 w-fit px-8 py-4",
+                              className: "font-black uppercase text-5xl mb-4 border-gray-900 w-fit px-8 py-4",
                               style: {
                                 letterSpacing: "0.2em"
                               }
