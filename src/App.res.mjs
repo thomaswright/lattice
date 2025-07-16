@@ -183,7 +183,7 @@ function App(props) {
                       children: [
                         JsxRuntime.jsx("div", {
                               children: "Lattice",
-                              className: "font-black uppercase text-5xl mb-4 border-gray-900 w-fit px-8 py-4",
+                              className: "font-black uppercase text-2xl mb-4 border-gray-900 w-fit px-8",
                               style: {
                                 letterSpacing: "0.2em"
                               }
@@ -200,7 +200,7 @@ function App(props) {
                               className: "uppercase text-sm text-gray-900"
                             })
                       ],
-                      className: "flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 py-8 "
+                      className: "flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 pb-2 pt-8 "
                     }),
                 JsxRuntime.jsx("div", {
                       children: Core__Array.make(100, false).map(function (param) {

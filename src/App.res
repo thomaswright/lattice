@@ -216,9 +216,9 @@ module Lattice = {
 let make = () => {
   <div>
     <div
-      className="flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 py-8 ">
+      className="flex flex-col items-center justify-center text-gray-900 border-gray-900 bg-gray-100 pb-2 pt-8 ">
       <div
-        className="font-black uppercase text-5xl mb-4 border-gray-900 w-fit px-8 py-4"
+        className="font-black uppercase text-2xl mb-4 border-gray-900 w-fit px-8"
         style={{letterSpacing: "0.2em"}}>
         {"Lattice"->React.string}
       </div>
